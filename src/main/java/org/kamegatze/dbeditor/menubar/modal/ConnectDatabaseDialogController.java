@@ -12,18 +12,17 @@ public class ConnectDatabaseDialogController {
     @FXML
     private TextField host;
     @FXML
-    private TextField path;
-    @FXML
     private TextField username;
     @FXML
     private TextField password;
+    @FXML
+    private TextField port;
+
+    @FXML
+    private TextField connection;
 
     public TextField getHost() {
         return host;
-    }
-
-    public TextField getPath() {
-        return path;
     }
 
     public TextField getUsername() {
@@ -32,5 +31,13 @@ public class ConnectDatabaseDialogController {
 
     public TextField getPassword() {
         return password;
+    }
+
+    public TextField getPort() {
+        return port;
+    }
+
+    public TextField getConnection() {
+        return connection;
     }
 }

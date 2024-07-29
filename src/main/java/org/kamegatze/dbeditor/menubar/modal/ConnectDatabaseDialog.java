@@ -13,8 +13,9 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
 
     private final ConnectDatabaseDto connectDatabaseDto;
 
+    private TextField connection;
     private TextField host;
-    private TextField path;
+    private TextField port;
     private TextField username;
     private TextField password;
 
@@ -39,13 +40,14 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
 
     private void setPropertyBindings() {
         host.textProperty().bindBidirectional(connectDatabaseDto.hostProperty());
-        path.textProperty().bindBidirectional(connectDatabaseDto.pathProperty());
         username.textProperty().bindBidirectional(connectDatabaseDto.usernameProperty());
         password.textProperty().bindBidirectional(connectDatabaseDto.passwordProperty());
+        port.textProperty().bindBidirectional(connectDatabaseDto.portProperty());
+        connection.textProperty().bindBidirectional(connectDatabaseDto.nameConnectProperty());
     }
 
     private void buildUI() throws IOException {
-        Properties properties = Props.getProperties();
+        Properties properties = Props.PROPERTIES;
 
         FXMLLoader fxmlLoader = new FXMLLoader(Objects.requireNonNull(
                 ConnectDatabaseDialog.class.getResource(properties.getProperty("application.view"))
@@ -54,11 +56,11 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
 
         ConnectDatabaseDialogController connectDatabaseDialogController = fxmlLoader.getController();
 
+        connection = connectDatabaseDialogController.getConnection();
         host = connectDatabaseDialogController.getHost();
-        path = connectDatabaseDialogController.getPath();
+        port = connectDatabaseDialogController.getPort();
         username = connectDatabaseDialogController.getUsername();
         password = connectDatabaseDialogController.getPassword();
-
 
         setDialogPane(pane);
 
@@ -72,7 +74,8 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
 
     private boolean validateDialog() {
         return !(host.getText().isEmpty() || host.getText().isBlank() ||
-                path.getText().isEmpty() || path.getText().isBlank() || username.getText().isEmpty() || username.getText().isBlank() ||
+                username.getText().isEmpty() || username.getText().isBlank() ||
+                port.getText().isEmpty() || port.getText().isBlank() ||
                 password.getText().isEmpty() || password.getText().isBlank());
     }
 
