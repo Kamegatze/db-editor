@@ -5,7 +5,6 @@ import org.kamegatze.dbeditor.backend.info.metadata.repositories.database.postgr
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public class DatabasePostgresQLRepositoryImpl implements DatabasePostgresQLRepository {
