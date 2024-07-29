@@ -6,7 +6,6 @@ import org.kamegatze.dbeditor.backend.info.metadata.domain.postgresql.PGDatabase
 import org.kamegatze.dbeditor.backend.info.metadata.repositories.database.DatabaseRepository;
 import org.kamegatze.dbeditor.backend.info.metadata.schema.Database;
 import org.kamegatze.dbeditor.backend.info.metadata.schema.impl.DatabaseImpl;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 
 
@@ -16,8 +15,8 @@ import java.util.stream.Collectors;
 public class ConnectionPostgresQLImpl implements ConnectionDatabase {
 
     private String name;
-    private DatabaseRepository<PGDatabase, Long> databaseRepository;
-    public ConnectionPostgresQLImpl(String name, DatabaseRepository databaseRepository) {
+    private final DatabaseRepository<PGDatabase, Long> databaseRepository;
+    public ConnectionPostgresQLImpl(String name, DatabaseRepository<PGDatabase, Long> databaseRepository) {
         this.name = name;
         this.databaseRepository = databaseRepository;
     }
