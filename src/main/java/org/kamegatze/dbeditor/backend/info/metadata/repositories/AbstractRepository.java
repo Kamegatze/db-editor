@@ -1,84 +1,71 @@
 package org.kamegatze.dbeditor.backend.info.metadata.repositories;
 
-import org.kamegatze.dbeditor.backend.info.metadata.annotions.database.Table;
-import org.kamegatze.dbeditor.backend.info.metadata.utility.ReflectionUtility;
+import org.kamegatze.dbeditor.backend.info.metadata.repositories.exceptions.NotFoundNameTableException;
+import org.kamegatze.dbeditor.backend.info.metadata.repositories.exceptions.NotFoundRowMapperException;
+import org.kamegatze.dbeditor.backend.info.metadata.utility.RepositoryReflectionUtility;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public interface AbstractRepository<T, ID> {
 
     default Optional<T> getById(ID id, JdbcTemplate jdbcTemplate) {
-        final String tableName = getTableName();
+        final String tableName = RepositoryReflectionUtility.getTableName(getClass(), 0);
         if (tableName.isEmpty()) {
-            return Optional.empty();
+            throw new NotFoundNameTableException("Not found name table");
         }
         String sql = String.format("select * from %s where id = ?", tableName);
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, getRowMapper(), id));
+        Optional<RowMapper<T>> rowMapper = RepositoryReflectionUtility.getRowMapper(getClass(), 0);
+        if (rowMapper.isPresent()) {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, rowMapper.get(), id));
+        }
+        throw new NotFoundRowMapperException("Not found row mapper");
     }
 
     default Collection<T> getAll(JdbcTemplate jdbcTemplate) {
-        final String tableName = getTableName();
+        final String tableName = RepositoryReflectionUtility.getTableName(getClass(), 0);
         if (tableName.isEmpty()) {
-            return List.of();
+            throw new NotFoundNameTableException("Not found name table");
         }
         String sql = String.format("select * from %s", tableName);
-        return jdbcTemplate.query(sql, getRowMapper());
+        Optional<RowMapper<T>> rowMapper = RepositoryReflectionUtility.getRowMapper(getClass(), 0);
+        if (rowMapper.isPresent()) {
+            return jdbcTemplate.query(sql, rowMapper.get());
+        }
+        throw new NotFoundRowMapperException("Not found row mapper");
     }
 
-
-    //todo moving to the utility class
-    default String getTableName() {
-        ReflectionUtility reflectionUtility = new ReflectionUtility();
-        Optional<ParameterizedType> interfacesWithGenerics = reflectionUtility
-                .getInterfacesWithGenerics(getClass());
-
-        if (interfacesWithGenerics.isPresent()) {
-            ParameterizedType parameterizedType = interfacesWithGenerics.get();
-            if (parameterizedType.getActualTypeArguments().length != 0) {
-                Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
-                if (actualTypeArgument instanceof Class<?> clazz) {
-                    Table table = clazz.getAnnotation(Table.class);
-                    if (Objects.nonNull(table)) {
-                        return table.name();
-                    }
-                }
-            }
+    default T save(T entity, JdbcTemplate jdbcTemplate) {
+        final String tableName = RepositoryReflectionUtility.getTableName(getClass(), 0);
+        if (tableName.isEmpty()) {
+            throw new NotFoundNameTableException("Not found name table");
         }
-        return "";
+        String sql = RepositoryReflectionUtility.generateSqlSave(entity);
+        Object[] args = RepositoryReflectionUtility.getArgsForSave(entity);
+
+        jdbcTemplate.update(sql, args);
+
+        return entity;
     }
 
-    //todo moving to the utility class
-    @SuppressWarnings("unchecked")
-    default RowMapper<T> getRowMapper() {
-        ReflectionUtility reflectionUtility = new ReflectionUtility();
-        Optional<ParameterizedType> interfacesWithGenerics = reflectionUtility
-                .getInterfacesWithGenerics(getClass());
-
-        if (interfacesWithGenerics.isPresent()) {
-            ParameterizedType parameterizedType = interfacesWithGenerics.get();
-            if (parameterizedType.getActualTypeArguments().length != 0) {
-                Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
-                if (actualTypeArgument instanceof Class<?> clazz) {
-                    Table table = clazz.getAnnotation(Table.class);
-                    if (Objects.nonNull(table)) {
-                        try {
-                            return (RowMapper<T>) table.mapper().getConstructor().newInstance();
-                        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                                 NoSuchMethodException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-            }
+    default T update(T entity, JdbcTemplate jdbcTemplate) {
+        final String tableName = RepositoryReflectionUtility.getTableName(getClass(), 0);
+        if (tableName.isEmpty()) {
+            throw new NotFoundNameTableException("Not found name table");
         }
-        return null;
+        String sql = RepositoryReflectionUtility.generateSqlUpdate(entity);
+        Object[] args = RepositoryReflectionUtility.getArgsForUpdate(entity);
+        jdbcTemplate.update(sql, args);
+        return entity;
+    }
+
+    default void delete(ID id, JdbcTemplate jdbcTemplate) {
+        final String tableName = RepositoryReflectionUtility.getTableName(getClass(), 0);
+        if (tableName.isEmpty()) {
+            throw new NotFoundNameTableException("Not found name table");
+        }
+        String sql = String.format("delete from %s where id =?", tableName);
+        jdbcTemplate.update(sql, id);
     }
 }
