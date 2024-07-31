@@ -9,7 +9,14 @@ import java.util.Optional;
 public interface DatabaseRepository<T, ID> extends AbstractRepository<T, ID>{
     Optional<T> findById(ID id);
     Collection<T> findAll();
-    T save(T entity);
-    T update(T entity);
-    void delete(ID id);
+
+    default T save(T entity) {
+        throw new UnsupportedOperationException();
+    }
+    default T update(T entity) {
+        throw new UnsupportedOperationException();
+    }
+    default void delete(ID id) {
+        throw new UnsupportedOperationException();
+    };
 }

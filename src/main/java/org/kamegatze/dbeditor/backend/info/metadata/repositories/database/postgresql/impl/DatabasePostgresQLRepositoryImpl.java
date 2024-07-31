@@ -9,13 +9,10 @@ import java.util.Optional;
 
 public class DatabasePostgresQLRepositoryImpl implements DatabasePostgresQLRepository {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public DatabasePostgresQLRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    public DatabasePostgresQLRepositoryImpl() {
     }
 
     @Override
@@ -28,20 +25,5 @@ public class DatabasePostgresQLRepositoryImpl implements DatabasePostgresQLRepos
         return getAll(jdbcTemplate).stream()
                 .filter(item -> !item.isTemplate())
                 .toList();
-    }
-
-    @Override
-    public PGDatabase save(PGDatabase entity) {
-        return save(entity, jdbcTemplate);
-    }
-
-    @Override
-    public PGDatabase update(PGDatabase entity) {
-        return update(entity, jdbcTemplate);
-    }
-
-    @Override
-    public void delete(Long aLong) {
-        delete(aLong, jdbcTemplate);
     }
 }
