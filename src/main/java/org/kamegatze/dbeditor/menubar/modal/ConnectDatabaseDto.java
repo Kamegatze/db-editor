@@ -1,7 +1,7 @@
 package org.kamegatze.dbeditor.menubar.modal;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
+import org.kamegatze.dbeditor.loader.properties.TypeDatabase;
 
 public class ConnectDatabaseDto {
     private final StringProperty nameConnect;
@@ -9,13 +9,15 @@ public class ConnectDatabaseDto {
     private final StringProperty port;
     private final StringProperty username;
     private final StringProperty password;
+    private final ObjectProperty<TypeDatabase> typeDatabase;
 
-    public ConnectDatabaseDto(String host, String username, String password, String nameConnect, String port) {
+    public ConnectDatabaseDto(String host, String username, String password, String nameConnect, String port, String typeDatabase) {
         this.host = new SimpleStringProperty(host);
         this.username = new SimpleStringProperty(username);
         this.password = new SimpleStringProperty(password);
         this.nameConnect = new SimpleStringProperty(nameConnect);
         this.port = new SimpleStringProperty(port);
+        this.typeDatabase = new SimpleObjectProperty<>(TypeDatabase.getTypeDatabase(typeDatabase));
     }
 
     public String getNameConnect() {
@@ -76,5 +78,12 @@ public class ConnectDatabaseDto {
 
     public void setPassword(String password) {
         this.password.set(password);
+    }
+
+    public ObjectProperty<TypeDatabase> getTypeDatabase() {
+        return typeDatabase;
+    }
+    public TypeDatabase getTypeDatabaseValue() {
+        return typeDatabase.get();
     }
 }

@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import org.kamegatze.dbeditor.loader.properties.Props;
+import org.kamegatze.dbeditor.loader.properties.TypeDatabase;
 
 import java.io.IOException;
 import java.util.*;
@@ -18,6 +19,7 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
     private TextField port;
     private TextField username;
     private TextField password;
+    private ChoiceBox<TypeDatabase> typeDatabase;
 
     public ConnectDatabaseDialog(ConnectDatabaseDto connectDatabaseDto) throws IOException {
         super();
@@ -44,6 +46,7 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
         password.textProperty().bindBidirectional(connectDatabaseDto.passwordProperty());
         port.textProperty().bindBidirectional(connectDatabaseDto.portProperty());
         connection.textProperty().bindBidirectional(connectDatabaseDto.nameConnectProperty());
+        typeDatabase.valueProperty().bindBidirectional(connectDatabaseDto.getTypeDatabase());
     }
 
     private void buildUI() throws IOException {
@@ -61,6 +64,7 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
         port = connectDatabaseDialogController.getPort();
         username = connectDatabaseDialogController.getUsername();
         password = connectDatabaseDialogController.getPassword();
+        typeDatabase = connectDatabaseDialogController.getTypeDatabase();
 
         setDialogPane(pane);
 

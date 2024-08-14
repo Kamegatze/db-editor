@@ -10,5 +10,6 @@ module org.kamegatze.dbeditor {
     opens org.kamegatze.dbeditor to javafx.fxml;
     opens org.kamegatze.dbeditor.menubar to javafx.fxml;
     opens org.kamegatze.dbeditor.menubar.modal to javafx.fxml;
+    opens org.kamegatze.dbeditor.loader.properties to javafx.fxml;
     exports org.kamegatze.dbeditor;
 }

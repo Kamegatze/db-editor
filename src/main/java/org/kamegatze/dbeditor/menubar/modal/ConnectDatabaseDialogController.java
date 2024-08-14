@@ -3,7 +3,10 @@ package org.kamegatze.dbeditor.menubar.modal;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import org.kamegatze.dbeditor.loader.properties.TypeDatabase;
+
 
 public class ConnectDatabaseDialogController {
 
@@ -17,6 +20,8 @@ public class ConnectDatabaseDialogController {
     private TextField password;
     @FXML
     private TextField port;
+    @FXML
+    private ChoiceBox<TypeDatabase> typeDatabase;
 
     @FXML
     private TextField connection;
@@ -39,5 +44,9 @@ public class ConnectDatabaseDialogController {
 
     public TextField getConnection() {
         return connection;
+    }
+
+    public ChoiceBox<TypeDatabase> getTypeDatabase() {
+        return typeDatabase;
     }
 }
