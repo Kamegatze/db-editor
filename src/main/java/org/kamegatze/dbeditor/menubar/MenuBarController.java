@@ -19,29 +19,36 @@ import org.kamegatze.dbeditor.menubar.modal.ConnectDatabaseDialog;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import java.io.IOException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Optional;
 
-public class MenuBarController {
 
+public class MenuBarController {
 
     @FXML
     private TreeView<String> treeView;
 
-    @FXML
-    private void onConnectCreate(ActionEvent event) throws IOException {
-        Dialog<ConnectDatabaseDto> connectDatabaseDtoDialog = new ConnectDatabaseDialog(
-                new ConnectDatabaseDto("", "", "", "", "",
-                        Props.PROPERTIES.getProperty("connection.databases.name.postgresql"))
-        );
+    private Props props;
+    private ConnectDatabaseDialog connectDatabaseDialog;
 
+
+    public void setProps(Props props) {
+        this.props = props;
+    }
+
+    public void setConnectDatabaseDialog(ConnectDatabaseDialog connectDatabaseDialog) {
+        this.connectDatabaseDialog = connectDatabaseDialog;
+    }
+
+    @FXML
+    private void onConnectCreate(ActionEvent event) {
+        Dialog<ConnectDatabaseDto> connectDatabaseDtoDialog = connectDatabaseDialog.init();
 
         Optional<ConnectDatabaseDto> connectDatabaseDto = connectDatabaseDtoDialog.showAndWait();
         connectDatabaseDto.ifPresent(connect -> {
-            String url = String.format(Props.PROPERTIES.getProperty("connection.url.template"), connect.getTypeDatabaseValue().getProperty(),
+            String url = String.format(props.getUrlTemplate(), connect.getTypeDatabaseValue().getProperty(),
                     connect.getHost(), connect.getPort()
             );
 
@@ -63,18 +70,18 @@ public class MenuBarController {
 
     private TreeItem<String> createTreeMenu(ConnectionDatabase connectionDatabase) {
         TreeItem<String> connection = new TreeItem<>(connectionDatabase.getName());
-        TreeItem<String> databases = new TreeItem<>(Props.PROPERTIES.getProperty("connection.databases.name"));
+        TreeItem<String> databases = new TreeItem<>(props.getDatabaseName());
         for(Database database : connectionDatabase.getDatabase()) {
-            TreeItem<String> schemas = new TreeItem<>(Props.PROPERTIES.getProperty("connection.databases.schemas.name"));
+            TreeItem<String> schemas = new TreeItem<>(props.getSchemeName());
             TreeItem<String> databaseTreeItem = new TreeItem<>(database.getName());
             for(Schema schema : database.getSchemas()) {
                 TreeItem<String> schemaTreeItem = new TreeItem<>(schema.getName());
-                TreeItem<String> tables = new TreeItem<>(Props.PROPERTIES.getProperty("connection.databases.schemas.tables.name"));
+                TreeItem<String> tables = new TreeItem<>(props.getTableName());
                 for(Table table : schema.getTables()) {
                     TreeItem<String> tableTreeItem = new TreeItem<>(table.getName());
                     tables.getChildren().add(tableTreeItem);
                 }
-                TreeItem<String> views = new TreeItem<>(Props.PROPERTIES.getProperty("connection.databases.schemas.views.name"));
+                TreeItem<String> views = new TreeItem<>(props.getViewName());
                 for (View view : schema.getViews()) {
                     TreeItem<String> viewTreeItem = new TreeItem<>(view.getName());
                     views.getChildren().add(viewTreeItem);
@@ -85,7 +92,7 @@ public class MenuBarController {
             databaseTreeItem.getChildren().add(schemas);
             databases.getChildren().add(databaseTreeItem);
         }
-        final String loginAndGroupRolesString = String.format(Props.PROPERTIES.getProperty("connection.login-and-group-roles"), 16);
+        final String loginAndGroupRolesString = String.format(props.getLoginRoles(), 16);
         TreeItem<String> loginAndGroupRoles = new TreeItem<>(loginAndGroupRolesString);
         connection.getChildren().add(databases);
         connection.getChildren().add(loginAndGroupRoles);

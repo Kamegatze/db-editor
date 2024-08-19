@@ -8,7 +8,6 @@ import org.kamegatze.dbeditor.loader.properties.Props;
 import org.kamegatze.dbeditor.loader.properties.TypeDatabase;
 
 import java.io.IOException;
-import java.util.*;
 
 public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
 
@@ -21,10 +20,20 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
     private TextField password;
     private ChoiceBox<TypeDatabase> typeDatabase;
 
-    public ConnectDatabaseDialog(ConnectDatabaseDto connectDatabaseDto) throws IOException {
+    private final DialogPane dialogPane;
+    private final ConnectDatabaseDialogController connectDatabaseDialogController;
+    private final Props props;
+
+    public ConnectDatabaseDialog(ConnectDatabaseDto connectDatabaseDto,
+                                 DialogPane dialogPane,
+                                 ConnectDatabaseDialogController connectDatabaseDialogController,
+                                 Props props) {
         super();
         this.setTitle("Create a new connect database");
         this.connectDatabaseDto = connectDatabaseDto;
+        this.dialogPane = dialogPane;
+        this.connectDatabaseDialogController = connectDatabaseDialogController;
+        this.props = props;
         buildUI();
         setPropertyBindings();
         setResultConverter();
@@ -49,15 +58,7 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
         typeDatabase.valueProperty().bindBidirectional(connectDatabaseDto.getTypeDatabase());
     }
 
-    private void buildUI() throws IOException {
-        Properties properties = Props.PROPERTIES;
-
-        FXMLLoader fxmlLoader = new FXMLLoader(Objects.requireNonNull(
-                ConnectDatabaseDialog.class.getResource(properties.getProperty("application.view"))
-        ));
-        DialogPane pane = createDialog(fxmlLoader);
-
-        ConnectDatabaseDialogController connectDatabaseDialogController = fxmlLoader.getController();
+    private void buildUI() {
 
         connection = connectDatabaseDialogController.getConnection();
         host = connectDatabaseDialogController.getHost();
@@ -66,7 +67,7 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
         password = connectDatabaseDialogController.getPassword();
         typeDatabase = connectDatabaseDialogController.getTypeDatabase();
 
-        setDialogPane(pane);
+        setDialogPane(dialogPane);
 
         Button button = (Button)getDialogPane().lookupButton(ConnectDatabaseDialogController.CONNECT);
         button.addEventFilter(ActionEvent.ACTION, event -> {
@@ -85,6 +86,16 @@ public class ConnectDatabaseDialog extends Dialog<ConnectDatabaseDto> {
 
     public DialogPane createDialog(FXMLLoader fxmlLoader) throws IOException {
         return fxmlLoader.load();
+    }
+
+    public ConnectDatabaseDialog init() {
+        connectDatabaseDto.setNameConnect("");
+        connectDatabaseDto.setHost("");
+        connectDatabaseDto.setPort("");
+        connectDatabaseDto.setUsername("");
+        connectDatabaseDto.setPassword("");
+        connectDatabaseDto.setTypeDatabase(props.getNamePostgresql());
+        return this;
     }
 
 }

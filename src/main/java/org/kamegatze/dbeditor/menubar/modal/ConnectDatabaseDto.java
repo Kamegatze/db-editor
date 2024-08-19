@@ -11,7 +11,8 @@ public class ConnectDatabaseDto {
     private final StringProperty password;
     private final ObjectProperty<TypeDatabase> typeDatabase;
 
-    public ConnectDatabaseDto(String host, String username, String password, String nameConnect, String port, String typeDatabase) {
+    public ConnectDatabaseDto(String host, String username, String password, String nameConnect,
+                              String port, String typeDatabase) {
         this.host = new SimpleStringProperty(host);
         this.username = new SimpleStringProperty(username);
         this.password = new SimpleStringProperty(password);
@@ -40,7 +41,7 @@ public class ConnectDatabaseDto {
         this.nameConnect.set(connect);
     }
 
-    public void getPort(String port) {
+    public void setPort(String port) {
         this.port.set(port);
     }
 
@@ -80,9 +81,14 @@ public class ConnectDatabaseDto {
         this.password.set(password);
     }
 
+    public void setTypeDatabase(String typeDatabase) {
+        this.typeDatabase.set(TypeDatabase.getTypeDatabase(typeDatabase));
+    }
+
     public ObjectProperty<TypeDatabase> getTypeDatabase() {
         return typeDatabase;
     }
+
     public TypeDatabase getTypeDatabaseValue() {
         return typeDatabase.get();
     }

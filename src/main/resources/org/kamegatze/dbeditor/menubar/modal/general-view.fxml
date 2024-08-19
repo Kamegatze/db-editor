@@ -39,9 +39,9 @@
                 <Label text="Password" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
                 <ChoiceBox fx:id="typeDatabase" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"
                           GridPane.rowIndex="0">
-                    <TypeDatabase fx:constant="PostgreSQL"/>
-                    <TypeDatabase fx:constant="MySQL"/>
-                    <TypeDatabase fx:constant="Oracle"/>
+                    <TypeDatabase fx:constant="POSTGRESQL"/>
+                    <TypeDatabase fx:constant="MYSQL"/>
+                    <TypeDatabase fx:constant="ORACLE"/>
                 </ChoiceBox>
                 <TextField fx:id="connection" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"
                            GridPane.rowIndex="1"/>

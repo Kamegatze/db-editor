@@ -5,11 +5,15 @@ module org.kamegatze.dbeditor {
     requires java.sql;
     requires spring.jdbc;
     requires org.postgresql.jdbc;
+    requires spring.context;
+    requires spring.beans;
+    requires spring.core;
 
 
-    opens org.kamegatze.dbeditor to javafx.fxml;
-    opens org.kamegatze.dbeditor.menubar to javafx.fxml;
-    opens org.kamegatze.dbeditor.menubar.modal to javafx.fxml;
-    opens org.kamegatze.dbeditor.loader.properties to javafx.fxml;
+    opens org.kamegatze.dbeditor;
+    opens org.kamegatze.dbeditor.menubar;
+    opens org.kamegatze.dbeditor.menubar.modal;
+    opens org.kamegatze.dbeditor.loader.properties;
+    opens org.kamegatze.dbeditor.configuration;
     exports org.kamegatze.dbeditor;
 }
